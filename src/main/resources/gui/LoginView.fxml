@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.acme.javafx.controllers.LoginViewController">
+    <children>
+        <Label fx:id="status" alignment="CENTER" contentDisplay="CENTER" layoutX="131.0" layoutY="307.0"
+               prefHeight="25.0" prefWidth="338.0">
+            <font>
+                <Font name="Arial Bold" size="15.0"/>
+            </font>
+        </Label>
+        <TextField layoutX="226.0" layoutY="151.0" promptText="Registered email"/>
+        <Button layoutX="249.0" layoutY="253.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="97.0"
+                text="Access"/>
+        <Label layoutX="168.0" layoutY="155.0" text="Email"/>
+        <Label layoutX="158.0" layoutY="204.0" text="Password"/>
+        <PasswordField fx:id="passwordTextField" layoutX="226.0" layoutY="200.0" promptText="Verify your mail box"/>
+        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="176.0" layoutY="50.0" prefHeight="6.0"
+               prefWidth="244.0" text="Login">
+            <font>
+                <Font name="Arial" size="30.0"/>
+            </font>
+        </Label>
+    </children>
+</AnchorPane>
