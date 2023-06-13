@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import java.util.List;
 
 @Singleton
+@Deprecated
 public class MainViewController {
 
     @FXML

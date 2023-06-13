@@ -45,7 +45,7 @@ public abstract class Account extends BaseEntity {
     @Enumerated(EnumType.STRING)
     protected OwnerType ownerType;
     protected BigDecimal availableBalance;
-    protected String secretKey = SecretKeyGen.generateSecretKey();
+    protected String secretKey;
 
     public abstract Short getAgency();
 
@@ -68,4 +68,9 @@ public abstract class Account extends BaseEntity {
     public abstract void setAvailableBalance(BigDecimal availableBalance);
 
     public abstract String getSecretKey();
+
+    @PrePersist
+    public void prePersistSecretKey() {
+        this.secretKey = SecretKeyGen.generateSecretKey();
+    }
 }

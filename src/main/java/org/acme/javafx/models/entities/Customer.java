@@ -38,6 +38,21 @@ public class Customer extends Person {
         this.account = account;
     }
 
+    public static Customer createInstance() {
+        return new Customer(
+                UUID.randomUUID(),
+                Instant.now(),
+                Instant.now(),
+                null,
+                "Eduardo",
+                "Pucinelli",
+                Instant.now(),
+                "10219341",
+                DocumentType.CNH,
+                PhysicalAccount.createInstance()
+        );
+    }
+
     public PhysicalAccount getAccount() {
         return account;
     }

@@ -23,7 +23,7 @@ public class App {
 	public void start(@Observes @StartupScene Stage stage) {
 
 		try {
-			URL fxml = getClass().getResource("/gui/MainView.fxml");
+			URL fxml = getClass().getResource("/gui/LoginView.fxml");
 			Parent fxmlParent = fxmlLoader.load(fxml.openStream());
 			stage.setScene(new Scene(fxmlParent, 600, 600));
 			stage.setTitle("Hello World Quarkus and JavaFX!");

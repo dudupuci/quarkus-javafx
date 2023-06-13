@@ -22,6 +22,7 @@ public final class PhysicalAccount extends Account {
     public PhysicalAccount() {
     }
 
+
     public PhysicalAccount(
             UUID id,
             Instant createdAt,
@@ -37,6 +38,22 @@ public final class PhysicalAccount extends Account {
     ) {
         super(id, createdAt, updatedAt, deletedAt, agency, accountNumber, accountType, ownerType, availableBalance, secretKey);
         this.customer = customer;
+    }
+
+    public static PhysicalAccount createInstance() {
+        return new PhysicalAccount(
+                UUID.randomUUID(),
+                Instant.now(),
+                Instant.now(),
+                null,
+                Short.valueOf("0001"),
+                "30249102",
+                AccountType.CURRENT_ACCOUNT,
+                OwnerType.PHYSICAL_PERSON,
+                BigDecimal.valueOf(25400),
+                Customer.createInstance(),
+                null
+        );
     }
 
     @Override

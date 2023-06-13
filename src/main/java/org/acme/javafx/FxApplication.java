@@ -2,9 +2,10 @@ package org.acme.javafx;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.acme.javafx.conf.StartupScene;
+
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;
-import org.acme.javafx.conf.StartupScene;
 
 public class FxApplication extends Application {
 
