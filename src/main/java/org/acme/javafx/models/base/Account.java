@@ -38,13 +38,19 @@ public abstract class Account extends BaseEntity {
         this.secretKey = secretKey;
     }
 
+    @Column(name = "agency")
     protected Short agency;
+    @Column(name = "account_number", nullable = false)
     protected String accountNumber;
     @Enumerated(EnumType.STRING)
+    @Column(name = "account_type", nullable = false)
     protected AccountType accountType;
     @Enumerated(EnumType.STRING)
+    @Column(name = "owner_type", nullable = false)
     protected OwnerType ownerType;
+    @Column(name = "available_balance", nullable = false)
     protected BigDecimal availableBalance;
+    @Column(name = "secret_key", nullable = false)
     protected String secretKey;
 
     public abstract Short getAgency();
@@ -68,6 +74,10 @@ public abstract class Account extends BaseEntity {
     public abstract void setAvailableBalance(BigDecimal availableBalance);
 
     public abstract String getSecretKey();
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     @PrePersist
     public void prePersistSecretKey() {

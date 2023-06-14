@@ -1,17 +1,15 @@
 package org.acme.javafx.models.base;
 
 import org.acme.javafx.models.entities.Telephone;
-import org.acme.javafx.models.entities.accounts.PhysicalAccount;
 import org.acme.javafx.models.enums.DocumentType;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import javax.xml.stream.events.StartElement;
 import java.time.Instant;
 import java.util.UUID;
 
 
+@MappedSuperclass
 public abstract class Person extends BaseEntity {
 
     public Person() {
@@ -26,7 +24,8 @@ public abstract class Person extends BaseEntity {
             String middleName,
             Instant birthDate,
             String document,
-            DocumentType documentType
+            DocumentType documentType,
+            Telephone telephone
     ) {
         super(id, createdAt, updatedAt, deletedAt);
         this.id = id;
@@ -35,13 +34,17 @@ public abstract class Person extends BaseEntity {
         this.birthDate = birthDate;
         this.document = document;
         this.documentType = documentType;
+        this.telephone = telephone;
     }
 
     protected String name;
+    @Column(name = "middle_name")
     protected String middleName;
+    @Column(name = "birth_date")
     protected Instant birthDate;
     protected String document;
     @Enumerated(EnumType.STRING)
+    @Column(name = "document_type")
     protected DocumentType documentType;
     @ManyToOne
     @JoinColumn(name = "telephone_id")

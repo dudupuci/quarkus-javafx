@@ -3,8 +3,7 @@ package org.acme.javafx.models.entities;
 import org.acme.javafx.models.base.BaseEntity;
 import org.acme.javafx.models.enums.TelephoneType;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -22,6 +21,9 @@ public class Telephone extends BaseEntity {
     }
 
     protected String number;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "telephone_type")
     protected TelephoneType telephoneType;
 
     public String getNumber() {

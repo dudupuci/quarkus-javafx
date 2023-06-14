@@ -51,7 +51,7 @@ public final class PhysicalAccount extends Account {
                 AccountType.CURRENT_ACCOUNT,
                 OwnerType.PHYSICAL_PERSON,
                 BigDecimal.valueOf(25400),
-                Customer.createInstance(),
+                null,
                 null
         );
     }
@@ -118,6 +118,8 @@ public final class PhysicalAccount extends Account {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
+
 
 
 }
