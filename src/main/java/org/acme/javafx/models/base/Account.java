@@ -10,6 +10,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Table(name = "tb_account")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 public abstract class Account extends BaseEntity {

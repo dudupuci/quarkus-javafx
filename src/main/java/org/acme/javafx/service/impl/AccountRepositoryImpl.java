@@ -5,12 +5,10 @@ import org.acme.javafx.models.base.Account;
 import org.acme.javafx.repositories.AccountRepositoryBase;
 import org.acme.javafx.service.AccountRepository;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.List;
+import javax.inject.Singleton;
 import java.util.UUID;
 
-@ApplicationScoped
 @Deprecated
 public class AccountRepositoryImpl implements AccountRepository {
 

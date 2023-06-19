@@ -1,10 +1,16 @@
 package org.acme.javafx.controllers;
 
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.acme.javafx.interfaces.SecretKeyGen;
 import org.acme.javafx.models.entities.Customer;
 import org.acme.javafx.models.entities.Telephone;
@@ -14,9 +20,10 @@ import org.acme.javafx.models.enums.DocumentType;
 import org.acme.javafx.models.enums.OwnerType;
 import org.acme.javafx.models.enums.TelephoneType;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.*;
@@ -25,9 +32,15 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.logging.Logger;
 
-@ApplicationScoped
+@Singleton
 public class LoginViewController implements Initializable {
+
+    private static final String AUTHENTICATION_SUCCESS = "Authentication Success!";
+    private static final String AUTHENTICATION_FAILED = "Authentication Failed!";
+    private static final Logger logger = Logger.getLogger(LoginViewController.class.getName());
 
     @Inject
     DataSource dataSource;
@@ -46,18 +59,57 @@ public class LoginViewController implements Initializable {
 
     @FXML
     protected void onAccessButtonAction() {
-        getInstance();
+        String identifier = identifierTextField.getText();
+        String secretKey = secretKeyTextField.getText();
+        var isAuthenticated = getAccountCredentials(UUID.fromString(identifier), secretKey);
+        logger.info("Authentication status: " + isAuthenticated);
+
+        if (isAuthenticated) {
+            statusLabel.setText(AUTHENTICATION_SUCCESS);
+            loadView("/gui/MainView.fxml", initializer -> {
+            });
+        } else {
+            statusLabel.setText(AUTHENTICATION_FAILED);
+        }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
 
+    private boolean getAccountCredentials(UUID id, String secretKey) {
+        ResultSet resultSet;
+        try (Connection connection = dataSource.getConnection()) {
+            String sql = "SELECT * FROM account " +
+                    "WHERE id = ? AND secret_key = ?";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setObject(1, id);
+            preparedStatement.setString(2, secretKey);
+
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                var accountId = resultSet.getObject("id");
+                var accountSecretKey = resultSet.getString("secret_key");
+
+                if (!resultSet.next() && accountId.equals(id) && accountSecretKey.equals(secretKey)) {
+                    return true;
+                }
+            }
+
+        } catch (SQLException err) {
+            throw new RuntimeException("Error: " + err.getMessage());
+        }
+        return false;
+    }
+
     private void getInstance() {
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(false);
 
-            String insertAccountSql = "INSERT INTO account " +
+            String insertAccountSql = "INSERT INTO tb_account " +
                     "(type, id, created_at, deleted_at, updated_at, account_number, account_type, agency, available_balance, owner_type, secret_key, company_id, customer_id) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -158,5 +210,22 @@ public class LoginViewController implements Initializable {
         }
     }
 
+    private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
+            Parent parent = loader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(parent, 600, 600));
+
+
+            stage.show();
+
+            T controller = loader.getController();
+            initializingAction.accept(controller);
+        } catch (IOException err) {
+            throw new RuntimeException("" + err.getMessage());
+
+        }
+    }
 
 }
