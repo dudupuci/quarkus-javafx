@@ -1,5 +1,6 @@
 package org.acme.javafx.models.base;
 
+import org.acme.javafx.interfaces.AccountNumberGen;
 import org.acme.javafx.interfaces.SecretKeyGen;
 import org.acme.javafx.models.enums.AccountType;
 import org.acme.javafx.models.enums.OwnerType;
@@ -41,8 +42,8 @@ public abstract class Account extends BaseEntity {
 
     @Column(name = "agency")
     protected Short agency;
-    @Column(name = "account_number", nullable = false)
-    protected String accountNumber;
+    @Column(name = "account_number")
+    protected String accountNumber = AccountNumberGen.generateAccountNumber();
     @Enumerated(EnumType.STRING)
     @Column(name = "account_type", nullable = false)
     protected AccountType accountType;
@@ -51,8 +52,9 @@ public abstract class Account extends BaseEntity {
     protected OwnerType ownerType;
     @Column(name = "available_balance", nullable = false)
     protected BigDecimal availableBalance;
-    @Column(name = "secret_key", nullable = false)
-    protected String secretKey;
+    @Column(name = "secret_key")
+    @GeneratedValue
+    protected String secretKey = SecretKeyGen.generateSecretKey();
 
     public abstract Short getAgency();
 
@@ -78,10 +80,5 @@ public abstract class Account extends BaseEntity {
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-    }
-
-    @PrePersist
-    public void prePersistSecretKey() {
-        this.secretKey = SecretKeyGen.generateSecretKey();
     }
 }

@@ -1,15 +1,15 @@
 package org.acme.javafx.controllers;
 
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.acme.javafx.interfaces.SecretKeyGen;
 import org.acme.javafx.models.entities.Customer;
@@ -19,6 +19,7 @@ import org.acme.javafx.models.enums.AccountType;
 import org.acme.javafx.models.enums.DocumentType;
 import org.acme.javafx.models.enums.OwnerType;
 import org.acme.javafx.models.enums.TelephoneType;
+import org.acme.javafx.utils.alerts.SystemAlert;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -37,7 +38,7 @@ import java.util.logging.Logger;
 
 @Singleton
 public class LoginViewController implements Initializable {
-
+    private static final Duration PAGE_TRANSITION_DURATION = Duration.seconds(2);
     private static final String AUTHENTICATION_SUCCESS = "Authentication Success!";
     private static final String AUTHENTICATION_FAILED = "Authentication Failed!";
     private static final Logger logger = Logger.getLogger(LoginViewController.class.getName());
@@ -58,18 +59,34 @@ public class LoginViewController implements Initializable {
     private Label statusLabel;
 
     @FXML
-    protected void onAccessButtonAction() {
-        String identifier = identifierTextField.getText();
-        String secretKey = secretKeyTextField.getText();
-        var isAuthenticated = getAccountCredentials(UUID.fromString(identifier), secretKey);
-        logger.info("Authentication status: " + isAuthenticated);
+    private Hyperlink registerHyperlink;
 
-        if (isAuthenticated) {
-            statusLabel.setText(AUTHENTICATION_SUCCESS);
-            loadView("/gui/MainView.fxml", initializer -> {
-            });
-        } else {
-            statusLabel.setText(AUTHENTICATION_FAILED);
+    @FXML
+    protected void onAccessButtonAction() {
+        try {
+            String identifier = identifierTextField.getText();
+            String secretKey = secretKeyTextField.getText();
+            var isAuthenticated = getAccountCredentials(UUID.fromString(identifier), secretKey);
+            logger.info("Authentication status: " + isAuthenticated);
+
+            if (isAuthenticated) {
+                statusLabel.setText(AUTHENTICATION_SUCCESS);
+                SystemAlert.showAlertWithDelay(AUTHENTICATION_SUCCESS, null, "Enjoy the system.", Alert.AlertType.INFORMATION);
+                var pauseTransition = new PauseTransition(PAGE_TRANSITION_DURATION);
+                pauseTransition.setOnFinished(event -> {
+
+                    Stage currentStage = (Stage) accessButton.getScene().getWindow();
+                    currentStage.close();
+
+                    loadView("/gui/HomeView.fxml", initializer -> {
+                    });
+                });
+                pauseTransition.play();
+            } else {
+                statusLabel.setText(AUTHENTICATION_FAILED);
+            }
+        } catch (Exception err) {
+            SystemAlert.showAlertWithDelay(err.getClass().getName(), null, err.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -80,7 +97,7 @@ public class LoginViewController implements Initializable {
     private boolean getAccountCredentials(UUID id, String secretKey) {
         ResultSet resultSet;
         try (Connection connection = dataSource.getConnection()) {
-            String sql = "SELECT * FROM account " +
+            String sql = "SELECT * FROM tb_account " +
                     "WHERE id = ? AND secret_key = ?";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -213,19 +230,33 @@ public class LoginViewController implements Initializable {
     private synchronized <T> void loadView(String absoluteName, Consumer<T> initializingAction) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
-            Parent parent = loader.load();
+            AnchorPane parent = loader.load();
             Stage stage = new Stage();
             stage.setScene(new Scene(parent, 600, 600));
 
-
-            stage.show();
+            stage.initStyle(StageStyle.UNDECORATED);
 
             T controller = loader.getController();
             initializingAction.accept(controller);
+
+            stage.show();
         } catch (IOException err) {
             throw new RuntimeException("" + err.getMessage());
-
         }
+    }
+
+    @FXML
+    protected void onRegisterHyperlinkAction() {
+        var pauseTransition = new PauseTransition(PAGE_TRANSITION_DURATION);
+        pauseTransition.setOnFinished(event -> {
+
+            Stage currentStage = (Stage) registerHyperlink.getScene().getWindow();
+            currentStage.close();
+
+            loadView("/gui/RegisterView.fxml", initializer -> {
+            });
+        });
+        pauseTransition.play();
     }
 
 }

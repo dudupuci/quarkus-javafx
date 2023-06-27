@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.acme.javafx.controllers.RegisterViewController">
+   <children>
+      <Label layoutX="194.0" layoutY="14.0" prefHeight="23.0" prefWidth="213.0" text="Registration Form">
+         <font>
+            <Font name="Arial Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="178.0" layoutY="37.0" text="Create now your account, so easy!" />
+      <Label layoutX="33.0" layoutY="85.0" prefHeight="17.0" prefWidth="66.0" text="Label">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Label>
+      <Line endX="501.0" layoutX="99.0" layoutY="68.0" startX="-100.0" />
+   </children>
+</AnchorPane>

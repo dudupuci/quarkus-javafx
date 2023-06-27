@@ -1,7 +1,5 @@
 package org.acme.javafx.models.base;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -22,10 +20,10 @@ public abstract class BaseEntity {
     }
 
     @Id
-    protected UUID id;
-
+    @Column(name = "id")
+    protected UUID id = UUID.randomUUID();
     @Column(name = "created_at", nullable = false)
-    protected Instant createdAt;
+    protected Instant createdAt = Instant.now();
     @Column(name = "updated_at", nullable = false)
     protected Instant updatedAt;
 

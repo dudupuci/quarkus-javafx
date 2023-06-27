@@ -5,10 +5,9 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.acme.javafx.controllers.HomeViewController">
    <children>
-      <MenuBar prefHeight="25.0" prefWidth="427.0">
+      <MenuBar prefHeight="25.0" prefWidth="600.0">
         <menus>
           <Menu mnemonicParsing="false" text="My Account">
             <items>
@@ -38,7 +37,7 @@
             </Menu>
             <Menu mnemonicParsing="false" text="System">
                <items>
-                  <MenuItem mnemonicParsing="false" text="Exit" />
+                  <MenuItem fx:id="systemExitMenuItem" mnemonicParsing="false" onAction="#onSystemExitMenuItemAction" text="Exit" />
                </items>
             </Menu>
         </menus>
