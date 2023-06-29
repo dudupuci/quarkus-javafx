@@ -3,6 +3,7 @@ package org.acme.javafx.models.entities.adresses;
 import org.acme.javafx.models.base.Address;
 import org.acme.javafx.models.enums.AddressType;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.time.Instant;
@@ -10,7 +11,7 @@ import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tb_commercial_address")
+@DiscriminatorValue("commercial_address")
 public class CommercialAddress extends Address {
 
     public CommercialAddress() {

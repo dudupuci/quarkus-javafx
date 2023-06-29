@@ -1,6 +1,9 @@
 package org.acme.javafx.models.base;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.time.Instant;
@@ -20,10 +23,14 @@ public abstract class BaseEntity {
     }
 
     @Id
-    @Column(name = "id")
-    protected UUID id = UUID.randomUUID();
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", columnDefinition = "uuid", updatable = false)
+    protected UUID id;
+
     @Column(name = "created_at", nullable = false)
     protected Instant createdAt = Instant.now();
+
     @Column(name = "updated_at", nullable = false)
     protected Instant updatedAt;
 

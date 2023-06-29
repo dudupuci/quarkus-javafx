@@ -1,12 +1,14 @@
 package org.acme.javafx.controllers;
 
 import javafx.animation.PauseTransition;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -19,7 +21,6 @@ import org.acme.javafx.models.enums.AccountType;
 import org.acme.javafx.models.enums.DocumentType;
 import org.acme.javafx.models.enums.OwnerType;
 import org.acme.javafx.models.enums.TelephoneType;
-import org.acme.javafx.utils.alerts.SystemAlert;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -63,7 +64,8 @@ public class LoginViewController implements Initializable {
 
     @FXML
     protected void onAccessButtonAction() {
-        try {
+        getInstance();
+        /*try {
             String identifier = identifierTextField.getText();
             String secretKey = secretKeyTextField.getText();
             var isAuthenticated = getAccountCredentials(UUID.fromString(identifier), secretKey);
@@ -88,6 +90,8 @@ public class LoginViewController implements Initializable {
         } catch (Exception err) {
             SystemAlert.showAlertWithDelay(err.getClass().getName(), null, err.getMessage(), Alert.AlertType.ERROR);
         }
+
+         */
     }
 
     @Override
@@ -138,6 +142,8 @@ public class LoginViewController implements Initializable {
                     "(id, created_at, deleted_at, updated_at, number, telephone_type) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
 
+            String updateCustomerSql = "UPDATE tb_customer SET account_id = ? WHERE id = ?";
+
             var customerTelephone = new Telephone(
                     UUID.randomUUID(),
                     Instant.now(),
@@ -157,7 +163,8 @@ public class LoginViewController implements Initializable {
                     Instant.from(LocalDateTime.of(2000, 07, 28, 10, 10).toInstant(ZoneOffset.UTC)),
                     "139107152",
                     DocumentType.RG,
-                    customerTelephone
+                    customerTelephone,
+                    null
             );
 
             var account = new PhysicalAccount(
@@ -173,6 +180,8 @@ public class LoginViewController implements Initializable {
                     customer,
                     SecretKeyGen.generateSecretKey()
             );
+
+            customer.setAccount(account);
 
             try (PreparedStatement insertAccountStatement = connection.prepareStatement(insertAccountSql, Statement.RETURN_GENERATED_KEYS);
                  PreparedStatement insertCustomerStatement = connection.prepareStatement(insertCustomerSql);
@@ -213,12 +222,19 @@ public class LoginViewController implements Initializable {
                 insertAccountStatement.setObject(13, account.getCustomer().getId());
                 insertAccountStatement.executeUpdate();
 
+                try (PreparedStatement alterCustomerTable = connection.prepareStatement(updateCustomerSql)) {
+                    alterCustomerTable.setObject(1, customer.getAccount().getId());
+                    alterCustomerTable.setObject(2, customer.getId());
+                    alterCustomerTable.executeUpdate();
+                }
+
 
                 connection.commit();
             } catch (SQLException err) {
                 connection.rollback();
                 throw new RuntimeException("Error trying to insert: " + err.getMessage());
             } finally {
+                System.out.println(customer.getAccount());
                 connection.setAutoCommit(true);
             }
         } catch (

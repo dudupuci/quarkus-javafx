@@ -2,12 +2,15 @@ package org.acme.javafx.models.base;
 
 import org.acme.javafx.models.enums.AddressType;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
 
 
+@Entity
+@Table(name = "tb_address")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type")
 public abstract class Address extends BaseEntity {
 
     public Address() {
